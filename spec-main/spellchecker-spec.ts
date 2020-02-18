@@ -27,7 +27,7 @@ describe('spellchecker', () => {
     await closeWindow(w)
   })
 
-  function triggerContextMenu () {
+  async function triggerContextMenu () {
     const offset = { x: 43, y: 42 }
     if (process.platform !== 'win32') {
       w.webContents.sendInputEvent({
@@ -38,6 +38,7 @@ describe('spellchecker', () => {
       })
     } else {
       require('robotjs').moveMouse(w.getContentBounds().x + offset.x, w.getContentBounds().y + offset.y)
+      await new Promise(r => setTimeout(r, 200))
       require('robotjs').mouseClick('right')
     }
   }
@@ -48,7 +49,7 @@ describe('spellchecker', () => {
     const contextMenuPromise = emittedOnce(w.webContents, 'context-menu')
     // Wait for spellchecker to load
     await new Promise(resolve => setTimeout(resolve, 1200))
-    triggerContextMenu()
+    await triggerContextMenu()
     const contextMenuParams: Electron.ContextMenuParams = (await contextMenuPromise)[1]
     expect(contextMenuParams.misspelledWord).to.eq('')
     expect(contextMenuParams.dictionarySuggestions).to.have.lengthOf(0)
@@ -60,7 +61,7 @@ describe('spellchecker', () => {
     const contextMenuPromise = emittedOnce(w.webContents, 'context-menu')
     // Wait for spellchecker to load
     await new Promise(resolve => setTimeout(resolve, 1200))
-    triggerContextMenu()
+    await triggerContextMenu()
     const contextMenuParams: Electron.ContextMenuParams = (await contextMenuPromise)[1]
     expect(contextMenuParams.misspelledWord).to.eq('Beautifulllll')
     expect(contextMenuParams.dictionarySuggestions).to.have.length.of.at.least(1)
