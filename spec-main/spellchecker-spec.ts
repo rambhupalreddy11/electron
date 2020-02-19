@@ -43,17 +43,17 @@ describe('spellchecker', () => {
     }
   }
 
-  ifit(process.platform !== 'win32' || hasRobotJS)('should detect correctly spelled words as correct', async () => {
-    await w.webContents.executeJavaScript('document.body.querySelector("textarea").value = "Beautiful and lovely"')
-    await w.webContents.executeJavaScript('document.body.querySelector("textarea").focus()')
-    const contextMenuPromise = emittedOnce(w.webContents, 'context-menu')
-    // Wait for spellchecker to load
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    await triggerContextMenu()
-    const contextMenuParams: Electron.ContextMenuParams = (await contextMenuPromise)[1]
-    expect(contextMenuParams.misspelledWord).to.eq('')
-    expect(contextMenuParams.dictionarySuggestions).to.have.lengthOf(0)
-  })
+//   ifit(process.platform !== 'win32' || hasRobotJS)('should detect correctly spelled words as correct', async () => {
+//     await w.webContents.executeJavaScript('document.body.querySelector("textarea").value = "Beautiful and lovely"')
+//     await w.webContents.executeJavaScript('document.body.querySelector("textarea").focus()')
+//     const contextMenuPromise = emittedOnce(w.webContents, 'context-menu')
+//     // Wait for spellchecker to load
+//     await new Promise(resolve => setTimeout(resolve, 1200))
+//     await triggerContextMenu()
+//     const contextMenuParams: Electron.ContextMenuParams = (await contextMenuPromise)[1]
+//     expect(contextMenuParams.misspelledWord).to.eq('')
+//     expect(contextMenuParams.dictionarySuggestions).to.have.lengthOf(0)
+//   })
 
   ifit(process.platform !== 'win32' || hasRobotJS)('should detect incorrectly spelled words as incorrect', async () => {
     await w.webContents.executeJavaScript('document.body.querySelector("textarea").value = "Beautifulllll asd asd"')
