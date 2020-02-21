@@ -152,9 +152,12 @@ int NodeMain(int argc, char* argv[]) {
     node_debugger.Start();
 
     node::BootstrapEnvironment(env);
+
+    // TODO(codebytere): we shouldn't have to call this - upstream?
     env->InitializeDiagnostics();
 
     // This is needed in order to enable v8 host weakref hooks.
+    // TODO(codebytere): we shouldn't have to call this - upstream?
     gin_env.isolate()->SetHostCleanupFinalizationGroupCallback(
         HostCleanupFinalizationGroupCallback);
 
@@ -181,7 +184,14 @@ int NodeMain(int argc, char* argv[]) {
       versions.SetReadOnly(ELECTRON_PROJECT_NAME, ELECTRON_VERSION_STRING);
     }
 
-    node::LoadEnvironment(env);
+    // TODO(codebytere): this causes an extra async hook to be run after the
+    // CallbackScope, we should try to handle this upstream.
+    {
+      node::CallbackScope cb_scope(gin_env.isolate(),
+                                   v8::Object::New(gin_env.isolate()), {1, 0});
+      node::LoadEnvironment(env);
+    }
+
     v8::Isolate* isolate = env->isolate();
 
     {
